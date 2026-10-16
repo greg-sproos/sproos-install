@@ -1154,6 +1154,7 @@ window.SPROOS_DATA = (function () {
       (location.protocol === 'file:'
         ? 'This page was opened from a file. Vimeo usually blocks embedded videos that have no web address.'
         : 'Check your connection, or watch it on Vimeo.') + '</p>' +
+      '<p class="video__code" style="font-size:13px;opacity:.7;margin-top:6px"></p>' +
       '<a class="btn btn--line" href="https://vimeo.com/' + s.video.id + (s.video.h ? '/' + s.video.h : '') +
       '" target="_blank" rel="noopener">Watch on Vimeo</a></div></div>';
   }
@@ -1266,14 +1267,25 @@ window.SPROOS_DATA = (function () {
         withVimeo(function () {
           try {
             var p = new window.Vimeo.Player(f), timer = null;
-            var showErr = function () { if (document.contains(errEl)) errEl.hidden = false; };
+            var showErr = function (why) {
+              if (!document.contains(errEl)) return;
+              var code = errEl.querySelector('.video__code');
+              if (code && why) code.textContent = why;
+              errEl.hidden = false;
+              track('install_video_error', { guide: g.slug, step_id: s.id, why: why || '' });
+            };
             // If the player never reports ready (blocked embed, no network), say so instead of leaving a blank box.
-            timer = setTimeout(showErr, 12000);
+            timer = setTimeout(function () { showErr('No reply from the Vimeo player after 12 seconds.'); }, 12000);
             p.ready().then(function () { clearTimeout(timer); errEl.hidden = true; });
             p.on('play', function () { track('install_video_play', { guide: g.slug, step_id: s.id }); });
-            p.on('error', function () { clearTimeout(timer); showErr(); });
+            p.on('error', function (e) {
+              clearTimeout(timer);
+              showErr('Vimeo says: ' + ((e && (e.name || e.message)) || 'unknown error') + (e && e.name && e.message ? ' – ' + e.message : ''));
+            });
           } catch (e) { /* the iframe still plays without the API */ }
         });
+      } else if (f && errEl) {
+        /* placeholder builds have no player */
       }
     } else if (state.view === 'intro') {
       var ig = cur();
