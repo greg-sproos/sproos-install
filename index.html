@@ -653,6 +653,8 @@ body[data-view="done"] .btn--line { border-color: var(--black); color: var(--bla
 /* Hide Gorgias' default bubble on this site; our own buttons open the chat. */
 #chat-button { display: none !important; }
 
+.introall { justify-self: center; margin-top: 4px; padding: 10px 8px; color: var(--accent); font-size: 15.5px; text-decoration: underline; text-underline-offset: 3px; }
+
 </style>
 </head>
 <body>
@@ -678,11 +680,11 @@ window.SPROOS_CONFIG = (function () {
       // TODO: what the help sheet says about response time. Leave empty to hide.
       replyNote: '',
       // TODO: optional fallback shown only if the Gorgias script fails to load. Leave empty to hide.
-      fallbackEmail: ''
+      fallbackEmail: 'hello@sproos.co'
     },
 
     // TODO: Junip review page for the product.
-    review: { url: 'https://sproos.co/' },
+    review: { url: 'https://junip.co/forms/sproos' },
     // TODO: filter refill product page.
     refill: { url: 'https://sproos.co/' },
 
@@ -1114,7 +1116,7 @@ window.SPROOS_DATA = (function () {
       '<p class="eyebrow">Install guide</p>' +
       '<h1 class="title intro__h" tabindex="-1" data-focus>' + emName(g.name) + '</h1>' +
       '<p class="intro__meta">We got it all on video!</p></section>' +
-      '<div class="introgo">' + go1 + '</div>' + notes + box + list +
+      '<div class="introgo">' + go1 + '<a class="introall" href="#/" data-act="home">Not your product? See all install guides</a></div>' + notes + box + list +
       '<button class="moment" data-act="help">Need help? Chat with us</button>' + footer() + '</main></div>';
   }
 
