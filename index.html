@@ -52,13 +52,17 @@
   --col: 460px;
   --tap: 56px;
 
-  /* The video is 4:5. Its height is capped so the Next button stays on screen. */
-  --vcap: min(62dvh, max(230px, calc(100dvh - 420px)));
+  /* The video is 4:5. Its height is capped so Next and the help buttons stay on screen.
+     --sv is the SMALL viewport height: it does not change when the phone's browser bars slide away,
+     so nothing resizes while you scroll. */
+  --sv: 100vh;
+  --vcap: max(240px, calc(var(--sv) - 285px));
   --vw: min(100%, calc(var(--vcap) * .8));
 }
+@supports (height: 100svh) { :root { --sv: 100svh; } }
 
 @media (min-width: 980px) {
-  :root { --vcap: min(560px, max(260px, calc(100dvh - 450px))); }
+  :root { --vcap: min(660px, max(280px, calc(var(--sv) - 330px))); }
 }
 
 body[data-view="done"] {
@@ -120,7 +124,7 @@ body[data-view="done"] :focus-visible { outline-color: var(--black); }
 
 .col {
   min-width: 0; display: flex; flex-direction: column; align-items: stretch;
-  min-height: calc(100dvh - 34px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  min-height: calc(var(--sv) - 34px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
 }
 
 .rail { display: none; }
@@ -137,14 +141,14 @@ body[data-view="done"] :focus-visible { outline-color: var(--black); }
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  min-height: 56px;
+  min-height: 48px;
 }
 .topbar > :first-child { justify-self: start; }
 .topbar > :last-child { justify-self: end; }
 
 .logo-link { display: block; color: var(--accent); padding: 8px 12px; border-radius: 10px; }
 body[data-view="done"] .logo-link { color: var(--black); }
-.logo { height: 34px; width: auto; }
+.logo { height: 30px; width: auto; }
 .logo path { fill: currentColor; }
 
 .topbar__steps {
@@ -162,7 +166,7 @@ body[data-view="done"] .logo-link { color: var(--black); }
 
 /* ---------- Progress dots ---------- */
 .dots {
-  list-style: none; margin: 6px 0 0; padding: 0 2px;
+  list-style: none; margin: 2px 0 0; padding: 0 2px;
   display: flex; align-items: center;
 }
 .dots li { display: flex; align-items: center; flex: 1 1 0; min-width: 0; }
@@ -190,8 +194,8 @@ body[data-view="done"] .dot::before { background: var(--black); }
 .dots .link.is-done { border-top-color: var(--signal); }
 
 /* ---------- Title ---------- */
-.dots, .eyebrow, .title { width: var(--vw); min-width: min(100%, 300px); margin-inline: auto; }
-.eyebrow { margin-top: 20px; font-size: 14px; color: var(--dim); letter-spacing: .01em; text-align: center; }
+.dots, .eyebrow, .title { width: 100%; margin-inline: auto; }
+.eyebrow { margin-top: 10px; font-size: 13px; color: var(--dim); letter-spacing: .01em; text-align: center; }
 .title, .home__h, .done__h, .moment__h { outline: none; }
 .title {
   margin-top: 6px;
@@ -200,6 +204,10 @@ body[data-view="done"] .dot::before { background: var(--black); }
   text-align: center;
   outline: none;
 }
+.title--step {
+  margin-top: 2px; white-space: nowrap; text-wrap: nowrap;
+  font: 400 clamp(20px, 6.2vw, 27px)/1.15 var(--f-display);
+}
 .title em {
   font: normal 400 .9em/1 var(--f-punch);
   letter-spacing: -.035em;
@@ -207,7 +215,7 @@ body[data-view="done"] .dot::before { background: var(--black); }
 }
 
 /* ---------- Video ---------- */
-.stagewrap { margin-top: 18px; }
+.stagewrap { margin-top: 10px; }
 .video {
   position: relative;
   aspect-ratio: 4 / 5;
@@ -252,8 +260,8 @@ body[data-view="done"] .dot::before { background: var(--black); }
 .video__err a { color: var(--accent); }
 
 .callout {
-  margin: 16px auto 0; width: var(--vw);
-  padding: 16px 18px; border: 2px solid var(--signal); border-radius: 18px; min-width: min(100%, 300px);
+  margin: 16px auto 0; width: 100%;
+  padding: 16px 18px; border: 2px solid var(--signal); border-radius: 18px;
 }
 .callout h2 { font: 400 20px/1.2 var(--f-display); color: var(--signal); }
 .callout p { margin-top: 6px; color: var(--fg); }
@@ -268,10 +276,10 @@ body[data-view="done"] .dot::before { background: var(--black); }
 
 /* ---------- Pager ---------- */
 .pager {
-  margin: 18px auto 0; width: var(--vw);
-  min-width: min(100%, 300px);
+  margin: 12px auto 0; width: 100%;
   display: flex; gap: 12px;
 }
+.pager .btn { min-height: 52px; }
 .round {
   flex: none; width: var(--tap); height: var(--tap); border-radius: 50%;
   display: grid; place-items: center;
@@ -303,7 +311,7 @@ body[data-view="done"] .btn--line { border-color: var(--black); color: var(--bla
 .btn--block { width: 100%; }
 
 /* ---------- Hints and actions ---------- */
-.hints { margin: 22px auto 0; width: var(--vw); min-width: min(100%, 300px); }
+.hints { margin: 22px auto 0; width: 100%; }
 .hints__t { font-size: 14px; color: var(--dim); text-align: center; }
 .chips { margin-top: 8px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
 .chip {
@@ -313,7 +321,7 @@ body[data-view="done"] .btn--line { border-color: var(--black); color: var(--bla
 .chip:hover { border-color: var(--fg); }
 
 .actions {
-  margin: 22px auto 0; width: var(--vw); min-width: min(100%, 300px);
+  margin: 22px auto 0; width: 100%;
   display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
 }
 .moment {
@@ -326,16 +334,16 @@ body[data-view="done"] .btn--line { border-color: var(--black); color: var(--bla
 
 /* Help dock: always on screen, sits at the bottom of the column */
 .dockwrap {
-  position: sticky; bottom: 0; z-index: 5; margin-top: auto; padding-top: 22px;
+  position: sticky; bottom: 0; z-index: 5; margin-top: auto; padding-top: 12px;
   background: linear-gradient(to top, var(--bg) 62%, transparent);
 }
 .dock {
-  width: var(--vw); min-width: min(100%, 300px); margin-inline: auto;
+  width: 100%; margin-inline: auto;
   display: grid; grid-template-columns: 1fr 1.15fr 1.6fr; gap: 8px;
-  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
 }
 .dockbtn {
-  min-height: 54px; padding: 0 8px; border-radius: 18px; border: 2px solid transparent;
+  min-height: 46px; padding: 0 8px; border-radius: 16px; border: 2px solid transparent;
   display: flex; align-items: center; justify-content: center; gap: 7px;
   font-size: 15px; line-height: 1.1; text-align: center;
   transition: transform .15s, filter .15s;
@@ -1108,7 +1116,7 @@ window.SPROOS_DATA = (function () {
   }
 
   function dotsHTML(steps, i) {
-    var n = steps.length, hit = n > 10 ? 22 : n > 8 ? 26 : 30, dv = n > 10 ? 12 : 15;
+    var n = steps.length, hit = n > 10 ? 22 : n > 8 ? 26 : 28, dv = n > 10 ? 12 : 15;
     var out = '<ol class="dots" aria-label="Progress" style="--hit:' + hit + 'px;--dv:' + dv + 'px">';
     steps.forEach(function (s, k) {
       var st = k < i ? 'is-done' : k === i ? 'is-now' : '';
@@ -1178,12 +1186,12 @@ window.SPROOS_DATA = (function () {
       '<main class="col">' + topbar('step') + dotsHTML(steps, i) +
       '<div class="swap ' + (state.dir < 0 ? 'enter enter--back' : 'enter') + '">' +
       '<p class="eyebrow">Step ' + (i + 1) + ' of ' + n + ' · ' + esc(label) + '</p>' +
-      '<h1 class="title" tabindex="-1" data-focus>' + titleHTML(s) + '</h1>' +
-      '<div class="stagewrap">' + videoHTML(s) + '</div>' + link + '</div>' +
+      '<h1 class="title title--step" tabindex="-1" data-focus>' + titleHTML(s) + '</h1>' +
+      '<div class="stagewrap">' + videoHTML(s) + '</div></div>' +
       '<nav class="pager" aria-label="Step navigation">' +
       '<button class="btn btn--back" data-act="back" aria-label="' + (i === 0 ? 'Back to all guides' : 'Previous step') + '">' + ico.left + 'Back</button>' +
       '<button class="btn btn--next" data-act="next">' + (last ? 'Finish' + ico.check : 'Next step' + ico.right) + '</button></nav>' +
-      callout + hints + footer() + dockHTML() + '</main></div>';
+      link + callout + hints + footer() + dockHTML() + '</main></div>';
   }
 
   // Help tools stay on screen so nobody has to scroll to find them.
@@ -1257,7 +1265,23 @@ window.SPROOS_DATA = (function () {
     document.head.appendChild(sc);
   }
 
+  // Step titles stay on one line: shrink the type just enough to fit the column.
+  function fitTitle() {
+    var t = app.querySelector('.title--step');
+    if (!t) return;
+    t.style.fontSize = '';
+    var size = parseFloat(getComputedStyle(t).fontSize), min = 15;
+    while (t.scrollWidth > t.clientWidth + 1 && size > min) { size -= 0.5; t.style.fontSize = size + 'px'; }
+  }
+  var lastW = window.innerWidth;
+  window.addEventListener('resize', function () {
+    // Phones fire resize when the browser bars slide away; only re-fit when the width really changed.
+    if (window.innerWidth !== lastW) { lastW = window.innerWidth; fitTitle(); }
+  });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
+
   function afterRender() {
+    fitTitle();
     var live = document.getElementById('live');
     if (state.view === 'step') {
       var g = cur(), steps = stepsOf(g), s = steps[state.i];
