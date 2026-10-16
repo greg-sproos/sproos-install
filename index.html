@@ -650,6 +650,9 @@ body[data-view="done"] .btn--line { border-color: var(--black); color: var(--bla
 .what__list li:not(.what__sec)::before { content: counter(w) "."; flex: none; min-width: 1.7em; }
 .what__sec { margin-top: 10px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
 
+/* Hide Gorgias' default bubble on this site; our own buttons open the chat. */
+#chat-button { display: none !important; }
+
 </style>
 </head>
 <body>
@@ -1429,15 +1432,26 @@ window.SPROOS_DATA = (function () {
     var G = window.GorgiasChat;
     if (G && typeof G.open === 'function') {
       closeSheet(true);
-      G.open();
-      track('install_chat_open', { guide: state.slug });
+      var line = contextLine();
+      try { G.open(); } catch (e) {}
+      // Pre-fill the message box so the team can see where the customer is.
+      setTimeout(function () { try { if (G.setCurrentInput) G.setCurrentInput(line); } catch (e) {} }, 400);
+      track('install_chat_open', { guide: state.slug, step_number: state.view === 'step' ? state.i + 1 : null });
       return;
     }
-    var m = document.getElementById('mock'), n = document.getElementById('mocknote');
-    if (m) m.hidden = false;
-    if (n) n.hidden = false;
     var b = sheet && sheet.querySelector('[data-act="chat"]'); if (b) b.hidden = true;
-    if (m) m.scrollIntoView({ block: 'nearest' });
+    if (C.proto) {
+      var m = document.getElementById('mock'), n = document.getElementById('mocknote');
+      if (m) m.hidden = false;
+      if (n) n.hidden = false;
+      if (m) m.scrollIntoView({ block: 'nearest' });
+      return;
+    }
+    var lede = sheet && sheet.querySelector('.sheet__lede');
+    if (lede) lede.textContent = C.help.fallbackEmail
+      ? 'Chat didn’t load. Email us at ' + C.help.fallbackEmail + ' and we’ll help.'
+      : 'Chat didn’t load. Refresh the page and try again.';
+    track('install_chat_unavailable', { guide: state.slug });
   }
 
   function openMoment() {
@@ -1577,5 +1591,7 @@ window.SPROOS_DATA = (function () {
 })();
 
 </script>
+<!-- Gorgias chat. The default bubble is hidden by css; our Get help buttons open it. -->
+<script id="gorgias-chat-widget-install-v3" src="https://config.gorgias.chat/bundle-loader/01HT570BRXS482ZAZ1WT37F1MD"></script>
 </body>
 </html>
