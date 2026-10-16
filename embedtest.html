@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Embed test</title>
+<style>
+ body{font:16px/1.4 -apple-system,system-ui,sans-serif;margin:0;padding:16px;background:#fff;color:#111}
+ h1{font-size:20px;margin:0 0 4px} p{margin:4px 0 14px;color:#444}
+ .t{margin:0 0 26px;border-bottom:1px solid #ddd;padding-bottom:18px}
+ .t h2{font-size:16px;margin:0 0 6px} iframe{width:100%;max-width:300px;aspect-ratio:4/5;border:0;background:#eee;display:block}
+ .s{margin-top:6px;font-weight:600}
+</style></head><body>
+<h1>Embed test</h1>
+<p>Each box is the same video (HS step 1). Tell me which ones show a video you can play. Screenshot the whole page.</p>
+
+<div class="t"><h2>A. Minimal link only</h2>
+<iframe src="https://player.vimeo.com/video/998502550?h=9aea1aa452" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+
+<div class="t"><h2>B. Same settings as the site</h2>
+<iframe src="https://player.vimeo.com/video/998502550?h=9aea1aa452&title=0&byline=0&portrait=0&badge=0&dnt=1&playsinline=1&loop=1&autopause=0&color=FF7557" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+
+<div class="t"><h2>C. Site settings without "dnt" and "badge"</h2>
+<iframe src="https://player.vimeo.com/video/998502550?h=9aea1aa452&title=0&byline=0&portrait=0&playsinline=1&loop=1&autopause=0&color=FF7557" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+
+<div class="t"><h2>D. Minimal link + player script listening</h2>
+<iframe id="d" src="https://player.vimeo.com/video/998502550?h=9aea1aa452" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+<div class="s" id="ds">Script: waiting…</div></div>
+
+<div class="t"><h2>E. Site settings + player script listening</h2>
+<iframe id="e" src="https://player.vimeo.com/video/998502550?h=9aea1aa452&title=0&byline=0&portrait=0&badge=0&dnt=1&playsinline=1&loop=1&autopause=0&color=FF7557" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+<div class="s" id="es">Script: waiting…</div></div>
+
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+ function hook(id, out){
+   var el=document.getElementById(out), t=setTimeout(function(){el.textContent='Script: NO REPLY after 10s'},10000);
+   try{
+     var p=new Vimeo.Player(document.getElementById(id));
+     p.ready().then(function(){clearTimeout(t);el.textContent='Script: READY ✓'});
+     p.on('error',function(e){clearTimeout(t);el.textContent='Script: ERROR '+(e&&(e.name||e.message))});
+   }catch(e){el.textContent='Script failed to start: '+e}
+ }
+ window.addEventListener('load',function(){
+   if(!window.Vimeo){document.getElementById('ds').textContent='Vimeo script did not load';document.getElementById('es').textContent='Vimeo script did not load';return}
+   hook('d','ds'); hook('e','es');
+ });
+</script>
+</body></html>
