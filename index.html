@@ -788,8 +788,10 @@ window.SPROOS_DATA = (function () {
     'rm-round-1': { title: 'Remove the rail and mounts.', em: 'Remove', section: 'Taking it down', video: { id: '1133191899' }, faq: ['bar-adhesive-left', 'bar-mount-stuck'] },
     'rm-round-2': { title: 'Clean up.', em: 'Clean', section: 'Taking it down', video: { id: '1133191802' }, faq: ['bar-adhesive-left', 'bar-marks'] },
     'rm-round-3': { title: 'Install your new wall mounts.', em: 'new wall mounts', section: 'Your next spot', video: { id: '1133191629' }, faq: ['bar-adhesive', 'bar-reuse'] },
-    // Rectangle mounts: video not added yet.
-    'rm-rect': { title: 'Remove your slide bar.', em: 'Remove', section: 'Taking it down', video: null, faq: ['bar-adhesive-left', 'bar-mount-stuck'] },
+    // Rectangle mounts: same three steps as round. Add video:{id:'...'} when the links arrive.
+    'rm-rect-1': { title: 'Remove the rail and mounts.', em: 'Remove', section: 'Taking it down', video: null, faq: ['bar-adhesive-left', 'bar-mount-stuck'] },
+    'rm-rect-2': { title: 'Clean up.', em: 'Clean', section: 'Taking it down', video: null, faq: ['bar-adhesive-left', 'bar-marks'] },
+    'rm-rect-3': { title: 'Install your new wall mounts.', em: 'new wall mounts', section: 'Your next spot', video: null, faq: ['bar-adhesive', 'bar-reuse'] },
     // Accessories: videos not shot yet, so these show a "coming soon" step. Add video:{id:'...'} when ready.
     'acc-shelf':  { title: 'Install your shelf.',      em: 'shelf',      section: 'Accessories', video: null, faq: ['bar-accessories', 'bar-side'] },
     'acc-mirror': { title: 'Install your mirror.',     em: 'mirror',     section: 'Accessories', video: null, faq: ['bar-accessories', 'bar-side'] },
@@ -880,10 +882,9 @@ window.SPROOS_DATA = (function () {
       slug: 'remove-slide-bar-rectangle', name: 'Remove Slide Bar: Rectangle Mounts', group: 'moving',
       img: 'https://cdn.shopify.com/s/files/1/0583/6242/9605/files/sproosslidebar-Green.jpg?v=1748545488',
       note: 'A moving kit has the tools to take your bar down and fresh glue for your next place.',
-      need: ['Philips head screwdriver (to take the plastic bracket off the glue mount)', 'Flexible metal putty knife with a thin blade', 'Razor blade (best for cleaning off leftover glue)'],
       alt: { text: 'Round mounts?', label: 'Use the round guide', slug: 'remove-slide-bar-round' },
-      hideFaq: ['off', 'new'], steps: ['rm-rect'], bar: true,
-      back: { title: 'Ready to put it <em>back up</em>?', text: 'Reinstall your slide bar at your next place.', label: 'Open the slide bar guide', slug: 'slide-bar' }
+      hideFaq: ['off', 'new'], steps: ['rm-rect-1', 'rm-rect-2', 'rm-rect-3'], bar: true,
+      back: { title: 'Ready to put it <em>back up</em>?', text: 'Pick up where your new mounts leave off and reinstall your slide bar.', label: 'Open the slide bar guide', slug: 'slide-bar' }
     },
 
     // ----- Accessories (in-box QR codes link here; need the slide bar) -----
