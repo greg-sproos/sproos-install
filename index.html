@@ -619,7 +619,7 @@ body[data-view="done"] .btn--line { border-color: var(--black); color: var(--bla
 
 .photo {
   position: relative; display: grid; place-items: center; overflow: hidden;
-  aspect-ratio: 1; width: 100%; border-radius: 22px; transition: box-shadow .15s;
+  aspect-ratio: 1; width: 100%; border-radius: 22px; transition: box-shadow .15s; background: #fff;
 }
 .photo__mark { width: 38%; height: auto; opacity: .9; }
 .photo__mark path { fill: currentColor; }
@@ -655,6 +655,7 @@ body[data-view="done"] .btn--line { border-color: var(--black); color: var(--bla
 
 .introall { justify-self: center; margin-top: 4px; padding: 10px 8px; color: var(--accent); font-size: 15.5px; text-decoration: underline; text-underline-offset: 3px; }
 
+
 </style>
 </head>
 <body>
@@ -685,8 +686,8 @@ window.SPROOS_CONFIG = (function () {
 
     // TODO: Junip review page for the product.
     review: { url: 'https://junip.co/forms/sproos' },
-    // TODO: filter refill product page.
-    refill: { url: 'https://sproos.co/' },
+    // Filter cartridge, with the subscription plan preselected.
+    refill: { url: 'https://sproos.co/products/shower-filter-cartridge?selling_plan=3997368485' },
 
     social: {
       handle: '@sprooshome',
@@ -759,7 +760,7 @@ window.SPROOS_DATA = (function () {
       title: 'Tips for mounting your slide bar.', em: 'Tips', section: 'Slide bar',
       video: { id: '1097389824' },
       link: { label: 'Have rectangle-shaped slide bar mounts?', url: 'https://sproos.co/pages/shower_install-step3' },
-      faq: ['bar-adhesive', 'bar-damage']
+      faq: ['bar-adhesive', 'bar-damage', 'bar-move']
     },
     'bar-clean': {
       title: 'Clean your shower wall.', em: 'Clean', section: 'Slide bar',
@@ -783,6 +784,12 @@ window.SPROOS_DATA = (function () {
       video: { id: '1097390550' },
       faq: ['bar-accessories', 'bar-side']
     },
+    // Removing the slide bar. Round mounts use the existing "moving" videos (no private hash).
+    'rm-round-1': { title: 'Remove the rail and mounts.', em: 'Remove', section: 'Taking it down', video: { id: '1133191899' }, faq: ['bar-adhesive-left', 'bar-mount-stuck'] },
+    'rm-round-2': { title: 'Clean up.', em: 'Clean', section: 'Taking it down', video: { id: '1133191802' }, faq: ['bar-adhesive-left', 'bar-marks'] },
+    'rm-round-3': { title: 'Install your new wall mounts.', em: 'new wall mounts', section: 'Your next spot', video: { id: '1133191629' }, faq: ['bar-adhesive', 'bar-reuse'] },
+    // Rectangle mounts: video not added yet.
+    'rm-rect': { title: 'Remove your slide bar.', em: 'Remove', section: 'Taking it down', video: null, faq: ['bar-adhesive-left', 'bar-mount-stuck'] },
     // Accessories: videos not shot yet, so these show a "coming soon" step. Add video:{id:'...'} when ready.
     'acc-shelf':  { title: 'Install your shelf.',      em: 'shelf',      section: 'Accessories', video: null, faq: ['bar-accessories', 'bar-side'] },
     'acc-mirror': { title: 'Install your mirror.',     em: 'mirror',     section: 'Accessories', video: null, faq: ['bar-accessories', 'bar-side'] },
@@ -856,8 +863,27 @@ window.SPROOS_DATA = (function () {
     {
       slug: 'slide-bar', name: 'Slide Bar', group: 'addon',
       img: 'https://cdn.shopify.com/s/files/1/0583/6242/9605/files/sproosslidebar-Green.jpg?v=1748545488',
-      box: ['Slide bar', 'Soap dish'], banner: slideBarBanner, hideFaq: ['off', 'new'],
+      box: ['24" sproos! slide bar', 'Hand shower slider', 'Soap dish', 'Glue kit', 'Video instructions'], banner: slideBarBanner, hideFaq: ['off', 'new'],
       steps: barSteps, bar: true, after: accAfter, swatch: ['#408FED', '#000000']
+    },
+
+    // ----- Moving (taking the slide bar down) -----
+    {
+      slug: 'remove-slide-bar-round', name: 'Remove Slide Bar: Round Mounts', group: 'moving',
+      img: 'https://cdn.shopify.com/s/files/1/0583/6242/9605/files/sproosslidebar-Green.jpg?v=1748545488',
+      note: 'A moving kit has the tools to take your bar down and fresh glue for your next place.',
+      alt: { text: 'Rectangle-shaped mounts?', label: 'Use the rectangle guide', slug: 'remove-slide-bar-rectangle' },
+      hideFaq: ['off', 'new'], steps: ['rm-round-1', 'rm-round-2', 'rm-round-3'], bar: true,
+      back: { title: 'Ready to put it <em>back up</em>?', text: 'Pick up where your new mounts leave off and reinstall your slide bar.', label: 'Open the slide bar guide', slug: 'slide-bar' }
+    },
+    {
+      slug: 'remove-slide-bar-rectangle', name: 'Remove Slide Bar: Rectangle Mounts', group: 'moving',
+      img: 'https://cdn.shopify.com/s/files/1/0583/6242/9605/files/sproosslidebar-Green.jpg?v=1748545488',
+      note: 'A moving kit has the tools to take your bar down and fresh glue for your next place.',
+      need: ['Philips head screwdriver (to take the plastic bracket off the glue mount)', 'Flexible metal putty knife with a thin blade', 'Razor blade (best for cleaning off leftover glue)'],
+      alt: { text: 'Round mounts?', label: 'Use the round guide', slug: 'remove-slide-bar-round' },
+      hideFaq: ['off', 'new'], steps: ['rm-rect'], bar: true,
+      back: { title: 'Ready to put it <em>back up</em>?', text: 'Reinstall your slide bar at your next place.', label: 'Open the slide bar guide', slug: 'slide-bar' }
     },
 
     // ----- Accessories (in-box QR codes link here; need the slide bar) -----
@@ -877,7 +903,8 @@ window.SPROOS_DATA = (function () {
   var menu = [
     { id: 'core', title: 'Showers' },
     { id: 'addon', title: 'Add-ons' },
-    { id: 'accessory', title: 'Accessories', sub: 'After you’ve installed your slide bar.' }
+    { id: 'accessory', title: 'Accessories', sub: 'After you’ve installed your slide bar.' },
+    { id: 'moving', title: 'Moving?', sub: 'Taking your slide bar down.' }
   ];
 
   // FAQ copy from the existing pages, typos fixed. `group` sets the heading it sits under.
@@ -903,25 +930,37 @@ window.SPROOS_DATA = (function () {
     { id: 'sprays', group: 'new', q: 'How do I change the sprays?',
       a: ['Rotate the face of the shower, left or right, using the thumb ridge at the bottom of the face. The name of the current spray will align with the handle.'] },
     { id: 'filter-change', group: 'filter', q: 'How often should I change the filter?',
-      a: ['For optimal performance, change the filter every 3 months. It’s a quick 2-minute process.'] },
+      a: ['For the best performance, swap your filter every 90 days. It’s a quick 2-minute job.',
+          'On a subscription? You’ll get a fresh filter automatically every 90 days, so you never have to remember.'] },
     { id: 'filter-works', group: 'filter', q: 'How does the sproos! filter work?',
       a: ['Our filter uses a dual-compartment system, with a cotton pad to eliminate larger particles and a compartment with KDF media to remove chlorine.',
           'It has been tested by a third-party agency and is proven to remove 85% of chlorine throughout its lifespan. The industry standard for chlorine removal is 50%.'] },
 
-    // Slide bar FAQ. PARAPHRASED from sproos.co/pages/new-rail-faq (I could not copy it word for word). Please check the wording.
+    // Slide bar FAQ. Adhesive, accessories and side answers are paraphrased from sproos.co/pages/new-rail-faq. Moving answer written with Greg.
     { id: 'bar-adhesive', group: 'bar', q: 'Will the adhesive work on my shower wall?',
       a: ['The slide bar sticks to smooth, hard surfaces like tile, stone, marble, plastic enclosures, glass, concrete and metal. It won’t stick to painted or uneven surfaces, wallpaper, drywall or soft plastics.',
           'Not sure about your wall? Get in touch and we’ll help.'] },
     { id: 'bar-damage', group: 'bar', q: 'Will it damage my walls when I take it down?',
-      a: ['No. The adhesive is designed to come off cleanly. If you move, you can get a moving kit to reinstall the bar with fresh glue and mounts.'] },
+      a: ['No. Our adhesive is made to come off cleanly, so your walls stay happy.'] },
+    { id: 'bar-move', group: 'bar', q: 'What if I move?',
+      a: ['Take your slide bar with you. A moving kit has the tools to take the bar down and fresh glue to put it back up at your next place.'] },
     { id: 'bar-accessories', group: 'bar', q: 'How many accessories can I add to the slide bar?',
       a: ['The bar comfortably holds three to four accessories, like a mirror, shelf or cup. Accessories slide and lock into place, so you can change your setup any time.'] },
+    { id: 'bar-mount-stuck', group: 'bar', q: 'A mount won’t come off',
+      a: ['Rock a putty knife back and forth while pressing down to cut through the glue. You can also work in from the sides or the bottom.'] },
+    { id: 'bar-adhesive-left', group: 'bar', q: 'There’s glue left on my wall',
+      a: ['Scrape it off with a razor blade or a non-metal scrub pad. Keep the blade flat so you don’t scratch the surface.'] },
+    { id: 'bar-marks', group: 'bar', q: 'It left marks on my wall',
+      a: ['Buff them out with a non-metal scrub pad, or a damp towel with a little baking soda. Then wipe clean and dry.'] },
+    { id: 'bar-reuse', group: 'bar', q: 'Can I reuse my old mounts?',
+      a: ['We don’t recommend it. Used mounts and glue don’t hold as securely, so use the fresh ones from your moving kit.'] },
     { id: 'bar-side', group: 'bar', q: 'Can the accessories go on the right side of the bar?',
       a: ['No. Accessories are designed for the left side only, so the slider can move up and down on the right.'] }
   ];
 
   return { steps: steps, guides: guides, menu: menu, faqs: faqs, faqGroups: faqGroups };
 })();
+
 
 /*
  * Sproos install guides: app.
@@ -1053,10 +1092,10 @@ window.SPROOS_DATA = (function () {
   }
 
   function imgSrc(u, w) { return u + (u.indexOf('?') > -1 ? '&' : '?') + 'width=' + w; }
-  // Product photo over a brand-colour fallback, so a missing image never leaves a hole.
+  // Product photo on white, so the tile never flashes a colour while the image loads.
   function photoHTML(g, w, cls) {
     var im = g.img ? '<img src="' + esc(imgSrc(g.img, w)) + '" alt="' + esc(g.name) + '" loading="lazy" decoding="async">' : '';
-    return '<span class="photo ' + (cls || '') + '" style="background:' + g.swatch[0] + ';color:' + g.swatch[1] + '">' + mark('photo__mark') + im + '</span>';
+    return '<span class="photo ' + (cls || '') + '">' + im + '</span>';
   }
   function emName(name) {
     var w = esc(name).split(' ');
@@ -1095,6 +1134,8 @@ window.SPROOS_DATA = (function () {
     var g = cur(), steps = stepsOf(g), n = steps.length, v = resumeAt(g), multi = isMulti(steps), prev = null;
     var box = g.box ? '<section class="box"><h2 class="box__h">In your box</h2><ul class="box__list">' +
       g.box.map(function (b) { return '<li><span class="box__tick">' + ico.check + '</span>' + esc(b) + '</li>'; }).join('') + '</ul></section>' : '';
+    var need = g.need ? '<section class="box"><h2 class="box__h">You’ll also need</h2><ul class="box__list">' +
+      g.need.map(function (b) { return '<li><span class="box__tick">' + ico.check + '</span>' + esc(b) + '</li>'; }).join('') + '</ul></section>' : '';
     var notes = '';
     if (g.prereq) notes += '<aside class="callout callout--note"><h2>Before you start</h2><p>' + esc(g.prereq.text) +
       ' <a href="' + hashFor({ view: 'intro', slug: g.prereq.slug }) + '" data-act="intro" data-slug="' + g.prereq.slug + '">' + esc(g.prereq.label) + '</a></p></aside>';
@@ -1116,7 +1157,7 @@ window.SPROOS_DATA = (function () {
       '<p class="eyebrow">Install guide</p>' +
       '<h1 class="title intro__h" tabindex="-1" data-focus>' + emName(g.name) + '</h1>' +
       '<p class="intro__meta">We got it all on video!</p></section>' +
-      '<div class="introgo">' + go1 + '<a class="introall" href="#/" data-act="home">Not your product? See all install guides</a></div>' + notes + box + list +
+      '<div class="introgo">' + go1 + '<a class="introall" href="#/" data-act="home">Not your product? See all install guides</a></div>' + notes + box + need + list +
       '<button class="moment" data-act="help">Need help? Chat with us</button>' + footer() + '</main></div>';
   }
 
@@ -1229,8 +1270,13 @@ window.SPROOS_DATA = (function () {
       next = '<section class="menu__sec next"><h2 class="menu__h">Add to your <em>shower</em></h2><p class="menu__sub">Accessories slide onto your bar.</p><ul class="tiles tiles--3">' +
         g.after.map(function (sl) { var a = guideBy(sl); return a ? tileHTML(a, true) : ''; }).join('') + '</ul></section>';
     }
+    if (g.back) {
+      next = '<section class="menu__sec next"><h2 class="menu__h">' + g.back.title + '</h2><p class="menu__sub">' + esc(g.back.text) + '</p>' +
+        '<div class="introgo"><a class="btn btn--next btn--block" href="' + hashFor({ view: 'intro', slug: g.back.slug }) + '" data-act="intro" data-slug="' + g.back.slug + '">' +
+        esc(g.back.label) + ico.right + '</a></div></section>';
+    }
     var filter = g.filter
-      ? '<section class="tipcard"><h2>Your filter lasts about 3 months</h2><p>Swapping it takes about 2 minutes.</p>' +
+      ? '<section class="tipcard"><h2>Swap your filter every 90 days</h2><p>It takes about 2 minutes. On a subscription? A fresh filter ships to you automatically every 90 days.</p>' +
         '<p><a data-act="refill" href="' + esc(C.refill.url) + '" target="_blank" rel="noopener">Get a replacement filter</a></p></section>' : '';
     var tip = sprays && g.tip === 'shower'
       ? '<section class="tipcard"><h2>Change the spray</h2><p>' + esc(sprays.a[0]) + '</p></section>' : '';
