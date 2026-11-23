@@ -759,7 +759,7 @@ window.SPROOS_DATA = (function () {
     'bar-tips': {
       title: 'Tips for mounting your slide bar.', em: 'Tips', section: 'Slide bar',
       video: { id: '1097389824' },
-      link: { label: 'Have rectangle-shaped slide bar mounts?', url: 'https://sproos.co/pages/shower_install-step3' },
+      link: { label: 'Have rectangle-shaped slide bar mounts?', slug: 'slide-bar-rectangle' },
       faq: ['bar-adhesive', 'bar-damage', 'bar-move']
     },
     'bar-clean': {
@@ -782,6 +782,22 @@ window.SPROOS_DATA = (function () {
     'bar-hang': {
       title: 'Reinstall the slide bar.', em: 'slide bar', section: 'Slide bar',
       video: { id: '1097390550' },
+      faq: ['bar-accessories', 'bar-side']
+    },
+    // Rectangle-mount slide bar install (the original bar). Videos have private hashes.
+    'rect-tips': {
+      title: 'Tips for mounting your slide bar.', em: 'Tips', section: 'Slide bar',
+      video: { id: '717153684', h: '3c13c65012' },
+      callout: { kind: 'caution', title: 'Give it 12 hours', body: 'After the bar is on, the mounts need 12 hours to dry without getting wet or the bar being taken off. Start in the morning, or overnight, on a day the shower is free.' },
+      faq: ['bar-adhesive', 'bar-damage', 'bar-move']
+    },
+    'rect-clean': { title: 'Clean your shower wall.', em: 'Clean', section: 'Slide bar', video: { id: '713533056', h: 'b53c0ec3bb' }, faq: ['bar-adhesive'] },
+    'rect-mounts': { title: 'Apply the mounts to the wall.', em: 'mounts', section: 'Slide bar', video: { id: '713533677', h: '66914e5357' }, faq: ['bar-adhesive'] },
+    'rect-glue': { title: 'Apply the glue.', em: 'glue', section: 'Slide bar', video: { id: '713775148', h: 'e927ae304f' }, faq: ['bar-damage'] },
+    'rect-attach': {
+      title: 'Attach the slide bar.', em: 'slide bar', section: 'Slide bar',
+      video: { id: '713775196', h: '01ca42f6e1' },
+      callout: { kind: 'caution', title: 'Caution', body: 'The slide bar is not meant to be used as a grab bar or handle.' },
       faq: ['bar-accessories', 'bar-side']
     },
     // Removing the slide bar. Round mounts use the existing "moving" videos (no private hash).
@@ -864,9 +880,19 @@ window.SPROOS_DATA = (function () {
     },
     {
       slug: 'slide-bar', name: 'Slide Bar', group: 'addon',
+      alt: { text: 'Rectangle-shaped mounts?', label: 'Use the rectangle guide', slug: 'slide-bar-rectangle' },
       img: 'https://cdn.shopify.com/s/files/1/0583/6242/9605/files/sproosslidebar-Green.jpg?v=1748545488',
       box: ['24" sproos! slide bar', 'Hand shower slider', 'Soap dish', 'Glue kit', 'Video instructions'], banner: slideBarBanner, hideFaq: ['off', 'new'],
       steps: barSteps, bar: true, after: accAfter, swatch: ['#408FED', '#000000']
+    },
+
+    // ----- Add-ons, continued: the original rectangle-mount bar -----
+    {
+      slug: 'slide-bar-rectangle', name: 'Slide Bar: Rectangle Mounts', group: 'addon',
+      img: 'https://cdn.shopify.com/s/files/1/0583/6242/9605/files/sproosslidebar-Green.jpg?v=1748545488',
+      note: 'For the original slide bar, the one with rectangle-shaped mounts.',
+      alt: { text: 'Round mounts?', label: 'Use the Slide Bar guide', slug: 'slide-bar' },
+      hideFaq: ['off', 'new'], steps: ['rect-tips', 'rect-clean', 'rect-mounts', 'rect-glue', 'rect-attach'], bar: true, after: accAfter
     },
 
     // ----- Moving (taking the slide bar down) -----
@@ -876,7 +902,7 @@ window.SPROOS_DATA = (function () {
       note: 'A moving kit has the tools to take your bar down and fresh glue for your next place.',
       alt: { text: 'Rectangle-shaped mounts?', label: 'Use the rectangle guide', slug: 'remove-slide-bar-rectangle' },
       hideFaq: ['off', 'new'], steps: ['rm-round-1', 'rm-round-2', 'rm-round-3'], bar: true,
-      back: { title: 'Ready to put it <em>back up</em>?', text: 'Reinstall your slide bar at your next place.', label: 'Open the slide bar guide', slug: 'slide-bar' }
+      back: { title: 'Ready to put it <em>back up</em>?', text: 'Pick up where your new mounts leave off and reinstall your slide bar.', label: 'Open the slide bar guide', slug: 'slide-bar' }
     },
     {
       slug: 'remove-slide-bar-rectangle', name: 'Remove Slide Bar: Rectangle Mounts', group: 'moving',
@@ -884,7 +910,7 @@ window.SPROOS_DATA = (function () {
       note: 'A moving kit has the tools to take your bar down and fresh glue for your next place.',
       alt: { text: 'Round mounts?', label: 'Use the round guide', slug: 'remove-slide-bar-round' },
       hideFaq: ['off', 'new'], steps: ['rm-rect-1', 'rm-rect-2', 'rm-rect-3'], bar: true,
-      back: { title: 'Ready to put it <em>back up</em>?', text: 'Pick up where your new mounts leave off and reinstall your slide bar.', label: 'Open the slide bar guide', slug: 'slide-bar' }
+      back: { title: 'Ready to put it <em>back up</em>?', text: 'Reinstall your slide bar at your next place.', label: 'Open the rectangle slide bar guide', slug: 'slide-bar-rectangle' }
     },
 
     // ----- Accessories (in-box QR codes link here; need the slide bar) -----
@@ -1223,7 +1249,9 @@ window.SPROOS_DATA = (function () {
       ? '<aside class="callout' + (s.callout.kind === 'caution' ? ' callout--caution' : '') + '"><h2>' + esc(s.callout.title) +
         '</h2><p>' + esc(s.callout.body) + '</p></aside>' : '';
     var link = s.link
-      ? '<p class="steplink"><a href="' + esc(s.link.url) + '" target="_blank" rel="noopener">' + esc(s.link.label) + '</a></p>' : '';
+      ? '<p class="steplink">' + (s.link.slug
+        ? '<a href="' + hashFor({ view: 'intro', slug: s.link.slug }) + '" data-act="intro" data-slug="' + s.link.slug + '">'
+        : '<a href="' + esc(s.link.url) + '" target="_blank" rel="noopener">') + esc(s.link.label) + '</a></p>' : '';
     var label = isMulti(steps) && s.section ? s.section : g.name;
     var hints = rel.length
       ? '<section class="hints"><p class="hints__t">Common questions on this step</p><div class="chips">' +
