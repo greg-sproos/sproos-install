@@ -1151,10 +1151,10 @@ window.SPROOS_DATA = (function () {
     var go1 = v
       ? '<button class="btn btn--next btn--block" data-act="resume" data-i="' + v + '">Continue at step ' + (v + 1) + ico.right + '</button>' +
         '<button class="btn btn--back btn--block introstart" data-act="start">Start over</button>'
-      : '<button class="btn btn--next btn--block" data-act="start">Start the install' + ico.right + '</button>';
+      : '<button class="btn btn--next btn--block" data-act="start">' + (g.group === 'moving' ? 'Start' : 'Start the install') + ico.right + '</button>';
     return '<div class="shell shell--solo"><main class="col col--intro">' + topbar('intro') +
       '<section class="intro">' + photoHTML(g, 900, 'intro__photo') +
-      '<p class="eyebrow">Install guide</p>' +
+      '<p class="eyebrow">' + (g.group === 'moving' ? 'Removal guide' : 'Install guide') + '</p>' +
       '<h1 class="title intro__h" tabindex="-1" data-focus>' + emName(g.name) + '</h1>' +
       '<p class="intro__meta">We got it all on video!</p></section>' +
       '<div class="introgo">' + go1 + '<a class="introall" href="#/" data-act="home">Not your product? See all install guides</a></div>' + notes + box + need + list +
