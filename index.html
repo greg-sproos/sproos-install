@@ -788,10 +788,10 @@ window.SPROOS_DATA = (function () {
     'rm-round-1': { title: 'Remove the rail and mounts.', em: 'Remove', section: 'Taking it down', video: { id: '1133191899' }, faq: ['bar-adhesive-left', 'bar-mount-stuck'] },
     'rm-round-2': { title: 'Clean up.', em: 'Clean', section: 'Taking it down', video: { id: '1133191802' }, faq: ['bar-adhesive-left', 'bar-marks'] },
     'rm-round-3': { title: 'Install your new wall mounts.', em: 'new wall mounts', section: 'Your next spot', video: { id: '1133191629' }, faq: ['bar-adhesive', 'bar-reuse'] },
-    // Rectangle mounts: same three steps as round. Add video:{id:'...'} when the links arrive.
-    'rm-rect-1': { title: 'Remove the rail and mounts.', em: 'Remove', section: 'Taking it down', video: null, faq: ['bar-adhesive-left', 'bar-mount-stuck'] },
-    'rm-rect-2': { title: 'Clean up.', em: 'Clean', section: 'Taking it down', video: null, faq: ['bar-adhesive-left', 'bar-marks'] },
-    'rm-rect-3': { title: 'Install your new wall mounts.', em: 'new wall mounts', section: 'Your next spot', video: null, faq: ['bar-adhesive', 'bar-reuse'] },
+    // Rectangle mounts: videos from the old remove_slide_bar pages (no private hash). Ends after cleaning; no new-mount step.
+    'rm-rect-1': { title: 'Remove the slide bar and brackets.', em: 'Remove', section: 'Taking it down', video: { id: '850428723' }, faq: ['bar-adhesive-left', 'bar-mount-stuck'] },
+    'rm-rect-2': { title: 'Remove the glue mounts.', em: 'glue mounts', section: 'Taking it down', video: { id: '850429766' }, faq: ['bar-mount-stuck', 'bar-adhesive-left'] },
+    'rm-rect-3': { title: 'Remove any residue and clean.', em: 'clean', section: 'Taking it down', video: { id: '850430515' }, faq: ['bar-adhesive-left', 'bar-marks'] },
     // Accessories: videos not shot yet, so these show a "coming soon" step. Add video:{id:'...'} when ready.
     'acc-shelf':  { title: 'Install your shelf.',      em: 'shelf',      section: 'Accessories', video: null, faq: ['bar-accessories', 'bar-side'] },
     'acc-mirror': { title: 'Install your mirror.',     em: 'mirror',     section: 'Accessories', video: null, faq: ['bar-accessories', 'bar-side'] },
@@ -876,7 +876,7 @@ window.SPROOS_DATA = (function () {
       note: 'A moving kit has the tools to take your bar down and fresh glue for your next place.',
       alt: { text: 'Rectangle-shaped mounts?', label: 'Use the rectangle guide', slug: 'remove-slide-bar-rectangle' },
       hideFaq: ['off', 'new'], steps: ['rm-round-1', 'rm-round-2', 'rm-round-3'], bar: true,
-      back: { title: 'Ready to put it <em>back up</em>?', text: 'Pick up where your new mounts leave off and reinstall your slide bar.', label: 'Open the slide bar guide', slug: 'slide-bar' }
+      back: { title: 'Ready to put it <em>back up</em>?', text: 'Reinstall your slide bar at your next place.', label: 'Open the slide bar guide', slug: 'slide-bar' }
     },
     {
       slug: 'remove-slide-bar-rectangle', name: 'Remove Slide Bar: Rectangle Mounts', group: 'moving',
