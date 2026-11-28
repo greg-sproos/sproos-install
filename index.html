@@ -922,7 +922,7 @@ window.SPROOS_DATA = (function () {
       note: 'A moving kit has the tools to take your bar down and fresh glue for your next place.',
       alt: { text: 'Rectangle-shaped mounts?', label: 'Use the rectangle guide', slug: 'remove-slide-bar-rectangle' },
       hideFaq: ['off', 'new'], steps: ['rm-round-1', 'rm-round-2', 'rm-round-3'], bar: true,
-      back: { title: 'Ready to put it <em>back up</em>?', text: 'Once the mount glue has dried, hang your slide bar.', label: 'Reinstall the slide bar', slug: 'slide-bar', i: 4 }
+      back: { title: 'Ready to put it <em>back up</em>?', text: 'Reinstall your slide bar at your next place.', label: 'Open the slide bar guide', slug: 'slide-bar' }
     },
     {
       slug: 'remove-slide-bar-rectangle', name: 'Remove Slide Bar: Rectangle Mounts', group: 'moving',
@@ -1106,8 +1106,13 @@ window.SPROOS_DATA = (function () {
     if (!h) return { view: 'home' };
     var p = h.split('/'), g = guideBy(p[0]);
     if (!g) return { view: 'home' };
-    var pm = /(?:^|&)mounts=([abAB])(?:&|$)/.exec(q);
-    if (pm) setMounts(g.slug, pm[1].toLowerCase() === 'b' ? 'new' : 'current');
+    // Packaging QR links carry ?mounts=a, b or r. They preset the mount type (a, b) and always start the guide fresh.
+    var pm = /(?:^|&)mounts=([abrABR])(?:&|$)/.exec(q);
+    if (pm) {
+      var mv0 = pm[1].toLowerCase();
+      if (mv0 !== 'r') setMounts(g.slug, mv0 === 'b' ? 'new' : 'current');
+      saveProg(g.slug, 0);
+    }
     if (!p[1]) return { view: 'intro', slug: g.slug };
     if (p[1] === 'done') return { view: 'done', slug: g.slug };
     var n = parseInt(p[1], 10);
