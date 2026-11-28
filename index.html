@@ -831,9 +831,9 @@ window.SPROOS_DATA = (function () {
   // Which mounts did the customer get? The new round mount swaps in new videos for steps 2-5.
   // Photos: add an `img` URL to any option and it replaces the black placeholder.
   var mountOptions = [
-    { id: 'new', name: 'New round mounts', sub: 'Different style glue tube' },
-    { id: 'current', name: 'Round mounts', sub: 'Original glue tube' },
-    { id: 'rect', name: 'Rectangle mounts', sub: 'The original slide bar', rect: true }
+    { id: 'current', name: 'Round mount A' },
+    { id: 'new', name: 'Round mount B' },
+    { id: 'rect', name: 'Rectangle mount', rect: true }
   ];
   var barSteps = ['bar-tips', 'bar-clean', 'bar-mounts', 'bar-glue', 'bar-hang'];
 
@@ -1021,7 +1021,7 @@ window.SPROOS_DATA = (function () {
 
   var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
-  var state = { view: 'home', slug: null, i: 0, dir: 1, autoplay: false, outcome: null, mounts: loadMounts() };
+  var state = { view: 'home', slug: null, i: 0, dir: 1, autoplay: false, outcome: null };
   var sheet = null, sheetReturn = null, lastHash = '';
 
   /* ---------- helpers ---------- */
@@ -1042,8 +1042,14 @@ window.SPROOS_DATA = (function () {
 
   var KEY = 'sproos.install.v1';
   var MKEY = 'sproos.mounts.v1';
-  function loadMounts() { try { return localStorage.getItem(MKEY) || null; } catch (e) { return null; } }
-  function saveMounts(v) { try { if (v) localStorage.setItem(MKEY, v); else localStorage.removeItem(MKEY); } catch (e) { /* storage can be blocked */ } }
+  // The mount choice is kept per guide, and cleared on Start / Start over, so a new install always asks again.
+  var mountMap = {};
+  try { mountMap = JSON.parse(localStorage.getItem(MKEY) || '{}') || {}; } catch (e) { mountMap = {}; }
+  function mountsOf(slug) { return mountMap[slug] || null; }
+  function setMounts(slug, v) {
+    if (v) mountMap[slug] = v; else delete mountMap[slug];
+    try { localStorage.setItem(MKEY, JSON.stringify(mountMap)); } catch (e) { /* storage can be blocked */ }
+  }
   function loadProg() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } }
   function saveProg(slug, i) { try { var p = loadProg(); p[slug] = i; localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { /* storage can be blocked */ } }
 
@@ -1075,7 +1081,7 @@ window.SPROOS_DATA = (function () {
       var base = D.steps[id], o = (g.overrides && g.overrides[id]) || {}, s = { id: id, index: idx };
       for (var k in base) s[k] = base[k];
       for (var j in o) s[j] = o[j];
-      if (state.mounts === 'new' && s.vNew) for (var m in s.vNew) s[m] = s.vNew[m];
+      if (mountsOf(g.slug) === 'new' && s.vNew) for (var m in s.vNew) s[m] = s.vNew[m];
       return s;
     });
   }
@@ -1273,21 +1279,22 @@ window.SPROOS_DATA = (function () {
     var cards = opts.map(function (o) {
       var pic = o.img ? '<img src="' + esc(o.img) + '" alt="" loading="lazy">' : '';
       return '<button class="pickopt" data-act="mounts" data-v="' + o.id + '"><span class="pickopt__pic">' + pic + '</span>' +
-        '<span class="pickopt__txt"><strong>' + esc(o.name) + '</strong><small>' + esc(o.sub) + '</small></span>' + ico.right + '</button>';
+        '<span class="pickopt__txt"><strong>' + esc(o.name) + '</strong>' + (o.sub ? '<small>' + esc(o.sub) + '</small>' : '') + '</span>' + ico.right + '</button>';
     }).join('');
     return '<div class="shell"><aside class="rail" aria-label="All steps">' + stepListHTML(g, steps, i) + '</aside>' +
       '<main class="col">' + topbar('step') + dotsHTML(steps, i) +
       '<div class="swap ' + (state.dir < 0 ? 'enter enter--back' : 'enter') + '">' +
       '<p class="eyebrow">Step ' + (i + 1) + ' of ' + n + ' · ' + esc(label) + '</p>' +
       '<h1 class="title title--pick" tabindex="-1" data-focus>Which <em>mounts</em> do you have?</h1>' +
-      '<p class="picksub">Check your box. The steps are a little different for each.</p>' +
+      '<p class="picksub">Check your bar. Look at the mount on the back of it and pick the one that matches.</p>' +
       '<div class="pick">' + cards + '</div></div>' +
       '<nav class="pager" aria-label="Step navigation"><button class="btn btn--back" data-act="back">' + ico.left + 'Back</button></nav>' +
       footer() + dockHTML() + '</main></div>';
   }
   function stepView() {
     var g = cur(), steps = stepsOf(g), i = state.i, s = steps[i], n = steps.length, last = i === n - 1;
-    if (!state.mounts && (s.pick || s.vNew)) {
+    var picked = mountsOf(g.slug);
+    if (!picked && (s.pick || s.vNew)) {
       var pi = i;
       steps.forEach(function (x, k) { if (x.pick && k <= i) pi = k; });
       return pickView(g, steps, pi, steps[pi], n);
@@ -1300,7 +1307,7 @@ window.SPROOS_DATA = (function () {
       ? '<p class="steplink">' + (s.link.slug
         ? '<a href="' + hashFor({ view: 'intro', slug: s.link.slug }) + '" data-act="intro" data-slug="' + s.link.slug + '">'
         : '<a href="' + esc(s.link.url) + '" target="_blank" rel="noopener">') + esc(s.link.label) + '</a></p>' : '';
-    if (!link && state.mounts && (s.pick || s.vNew)) {
+    if (!link && picked && (s.pick || s.vNew)) {
       link = '<p class="steplink"><a href="#" data-act="mounts-reset">Wrong mounts? Change</a></p>';
     }
     var label = isMulti(steps) && s.section ? s.section : g.name;
@@ -1628,7 +1635,7 @@ window.SPROOS_DATA = (function () {
     if (t.tagName === 'A' && act !== 'review' && act !== 'refill') e.preventDefault();
     switch (act) {
       case 'intro': go({ view: 'intro', slug: t.dataset.slug }); break;
-      case 'start': go({ view: 'step', slug: state.slug, i: 0 }, { autoplay: true }); break;
+      case 'start': setMounts(state.slug, null); go({ view: 'step', slug: state.slug, i: 0 }, { autoplay: true }); break;
       case 'resume': go({ view: 'step', slug: state.slug, i: +t.dataset.i || 0 }, { autoplay: true }); break;
       case 'home': go({ view: 'home' }); break;
       case 'goto': {
@@ -1648,13 +1655,13 @@ window.SPROOS_DATA = (function () {
       case 'mounts':
         var mv = t.dataset.v;
         if (mv === 'rect') { go({ view: 'intro', slug: 'slide-bar-rectangle' }); break; }
-        state.mounts = mv; saveMounts(mv);
+        setMounts(state.slug, mv);
         track('install_mounts_pick', { guide: state.slug, mounts: mv });
         var pk = 0; stepsOf(cur()).forEach(function (x, k) { if (x.pick && k <= state.i) pk = k; });
         go({ view: 'step', slug: state.slug, i: pk }, { dir: 1, autoplay: false });
         break;
       case 'mounts-reset':
-        state.mounts = null; saveMounts(null);
+        setMounts(state.slug, null);
         var rk = state.i; stepsOf(cur()).forEach(function (x, k) { if (x.pick && k <= state.i) rk = k; });
         go({ view: 'step', slug: state.slug, i: rk }, { dir: -1 });
         break;
