@@ -663,7 +663,7 @@ body[data-view="done"] .btn--line { border-color: var(--black); color: var(--bla
 .pickopt { display: flex; align-items: center; gap: 14px; width: 100%; padding: 10px 16px 10px 10px; border: 0; border-radius: 22px; background: var(--paper); color: var(--ink, #3F072F); text-align: left; cursor: pointer; font: inherit; }
 .pickopt:hover { filter: brightness(1.03); }
 .pickopt:focus-visible { outline: 3px solid var(--signal); outline-offset: 3px; }
-.pickopt__pic { flex: none; width: 96px; height: 96px; border-radius: 14px; background: #000; overflow: hidden; }
+.pickopt__pic { flex: none; width: 144px; height: 144px; border-radius: 14px; background: #000; overflow: hidden; }
 .pickopt__pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .pickopt__txt { flex: 1; display: grid; gap: 2px; }
 .pickopt__txt strong { font-size: 18px; font-weight: 600; }
@@ -833,7 +833,7 @@ window.SPROOS_DATA = (function () {
   var mountOptions = [
     { id: 'current', name: 'Round mount A', img: 'https://cdn.shopify.com/s/files/1/0583/6242/9605/files/mount_A-thumb.jpg?v=1795832088' },
     { id: 'new', name: 'Round mount B', img: 'https://cdn.shopify.com/s/files/1/0583/6242/9605/files/mount_B-thumb.jpg?v=1795832088' },
-    { id: 'rect', name: 'Rectangle mount', rect: true }
+    { id: 'rect', name: 'Rectangle mount', rect: true, img: 'https://cdn.shopify.com/s/files/1/0583/6242/9605/files/Moving-Kit-Rectangle-2.jpg?v=1761743140' }
   ];
   var barSteps = ['bar-tips', 'bar-clean', 'bar-mounts', 'bar-glue', 'bar-hang'];
 
@@ -1277,7 +1277,7 @@ window.SPROOS_DATA = (function () {
     var opts = D.mountOptions.filter(function (o) { return !o.rect || g.pickRect; });
     var label = isMulti(steps) && s.section ? s.section : g.name;
     var cards = opts.map(function (o) {
-      var pic = o.img ? '<img src="' + esc(imgSrc(o.img, 240)) + '" alt="Mount on the back of the bar" decoding="async">' : '';
+      var pic = o.img ? '<img src="' + esc(imgSrc(o.img, 360)) + '" alt="Mount on the back of the bar" decoding="async">' : '';
       return '<button class="pickopt" data-act="mounts" data-v="' + o.id + '"><span class="pickopt__pic">' + pic + '</span>' +
         '<span class="pickopt__txt"><strong>' + esc(o.name) + '</strong>' + (o.sub ? '<small>' + esc(o.sub) + '</small>' : '') + '</span>' + ico.right + '</button>';
     }).join('');
