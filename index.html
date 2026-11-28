@@ -816,7 +816,7 @@ window.SPROOS_DATA = (function () {
     // Removing the slide bar. Round mounts use the existing "moving" videos (no private hash).
     'rm-round-1': { title: 'Remove the rail and mounts.', em: 'Remove', section: 'Taking it down', video: { id: '1133191899' }, faq: ['bar-adhesive-left', 'bar-mount-stuck'] },
     'rm-round-2': { title: 'Clean up.', em: 'Clean', section: 'Taking it down', video: { id: '1133191802' }, faq: ['bar-adhesive-left', 'bar-marks'] },
-    'rm-round-3': { title: 'Install your new wall mounts.', em: 'new wall mounts', section: 'Your next spot', video: { id: '1133191629' }, faq: ['bar-adhesive', 'bar-reuse'] },
+    'rm-round-3': { title: 'Install your new wall mounts.', em: 'new wall mounts', section: 'Your next spot', video: { id: '1133191629' }, pick: true, vNew: { video: { id: '1250752283', h: '60ffe1d6e1' } }, faq: ['bar-adhesive', 'bar-reuse'] },
     // Rectangle mounts: videos from the old remove_slide_bar pages (no private hash). Ends after cleaning; no new-mount step.
     'rm-rect-1': { title: 'Remove the slide bar and brackets.', em: 'Remove', section: 'Taking it down', video: { id: '850428723' }, faq: ['bar-adhesive-left', 'bar-mount-stuck'] },
     'rm-rect-2': { title: 'Remove the glue mounts.', em: 'glue mounts', section: 'Taking it down', video: { id: '850429766' }, faq: ['bar-mount-stuck', 'bar-adhesive-left'] },
@@ -922,7 +922,7 @@ window.SPROOS_DATA = (function () {
       note: 'A moving kit has the tools to take your bar down and fresh glue for your next place.',
       alt: { text: 'Rectangle-shaped mounts?', label: 'Use the rectangle guide', slug: 'remove-slide-bar-rectangle' },
       hideFaq: ['off', 'new'], steps: ['rm-round-1', 'rm-round-2', 'rm-round-3'], bar: true,
-      back: { title: 'Ready to put it <em>back up</em>?', text: 'Pick up where your new mounts leave off and reinstall your slide bar.', label: 'Open the slide bar guide', slug: 'slide-bar' }
+      back: { title: 'Ready to put it <em>back up</em>?', text: 'Once the mount glue has dried, hang your slide bar.', label: 'Reinstall the slide bar', slug: 'slide-bar', i: 4 }
     },
     {
       slug: 'remove-slide-bar-rectangle', name: 'Remove Slide Bar: Rectangle Mounts', group: 'moving',
@@ -1042,7 +1042,8 @@ window.SPROOS_DATA = (function () {
 
   var KEY = 'sproos.install.v1';
   var MKEY = 'sproos.mounts.v1';
-  // The mount choice is kept per guide, and cleared on Start / Start over, so a new install always asks again.
+  // The mount choice is kept per guide. It is cleared on Start over and when a guide is finished, so a new install asks again.
+  // Links can preset it with ?mounts=a or ?mounts=b (printed on the packaging QR codes).
   var mountMap = {};
   try { mountMap = JSON.parse(localStorage.getItem(MKEY) || '{}') || {}; } catch (e) { mountMap = {}; }
   function mountsOf(slug) { return mountMap[slug] || null; }
@@ -1100,10 +1101,13 @@ window.SPROOS_DATA = (function () {
 
   /* ---------- routing ---------- */
   function parseHash() {
-    var h = (location.hash || '').replace(/^#\/?/, '');
+    var h = (location.hash || '').replace(/^#\/?/, ''), q = '';
+    if (h.indexOf('?') > -1) { q = h.slice(h.indexOf('?') + 1); h = h.slice(0, h.indexOf('?')); }
     if (!h) return { view: 'home' };
     var p = h.split('/'), g = guideBy(p[0]);
     if (!g) return { view: 'home' };
+    var pm = /(?:^|&)mounts=([abAB])(?:&|$)/.exec(q);
+    if (pm) setMounts(g.slug, pm[1].toLowerCase() === 'b' ? 'new' : 'current');
     if (!p[1]) return { view: 'intro', slug: g.slug };
     if (p[1] === 'done') return { view: 'done', slug: g.slug };
     var n = parseInt(p[1], 10);
@@ -1126,6 +1130,12 @@ window.SPROOS_DATA = (function () {
     state.dir = opts.dir || 1;
     state.autoplay = !!opts.autoplay;
     if (r.view !== 'done') state.outcome = null;
+    else {
+      // Finishing clears the choice, but hands it on to the guide the finish button opens next.
+      var fg = guideBy(r.slug), fm = mountsOf(r.slug);
+      if (fg && fg.back && fm) setMounts(fg.back.slug, fm);
+      setMounts(r.slug, null);
+    }
     if (C.syncHash) {
       var h = hashFor(r);
       if (location.hash !== h) { lastHash = h; location.hash = h; }
@@ -1207,7 +1217,7 @@ window.SPROOS_DATA = (function () {
     }).join('') + '</ol></section>';
     var go1 = v
       ? '<button class="btn btn--next btn--block" data-act="resume" data-i="' + v + '">Continue at step ' + (v + 1) + ico.right + '</button>' +
-        '<button class="btn btn--back btn--block introstart" data-act="start">Start over</button>'
+        '<button class="btn btn--back btn--block introstart" data-act="restart">Start over</button>'
       : '<button class="btn btn--next btn--block" data-act="start">' + (g.group === 'moving' ? 'Start' : 'Start the install') + ico.right + '</button>';
     return '<div class="shell shell--solo"><main class="col col--intro">' + topbar('intro') +
       '<section class="intro">' + photoHTML(g, 900, 'intro__photo') +
@@ -1359,7 +1369,8 @@ window.SPROOS_DATA = (function () {
     }
     if (g.back) {
       next = '<section class="menu__sec next"><h2 class="menu__h">' + g.back.title + '</h2><p class="menu__sub">' + esc(g.back.text) + '</p>' +
-        '<div class="introgo"><a class="btn btn--next btn--block" href="' + hashFor({ view: 'intro', slug: g.back.slug }) + '" data-act="intro" data-slug="' + g.back.slug + '">' +
+        '<div class="introgo"><a class="btn btn--next btn--block" href="' + hashFor(g.back.i != null ? { view: 'step', slug: g.back.slug, i: g.back.i } : { view: 'intro', slug: g.back.slug }) + '" data-act="' +
+        (g.back.i != null ? 'backto' : 'intro') + '" data-slug="' + g.back.slug + '" data-i="' + (g.back.i || 0) + '">' +
         esc(g.back.label) + ico.right + '</a></div></section>';
     }
     var filter = g.filter
@@ -1635,7 +1646,9 @@ window.SPROOS_DATA = (function () {
     if (t.tagName === 'A' && act !== 'review' && act !== 'refill') e.preventDefault();
     switch (act) {
       case 'intro': go({ view: 'intro', slug: t.dataset.slug }); break;
-      case 'start': setMounts(state.slug, null); go({ view: 'step', slug: state.slug, i: 0 }, { autoplay: true }); break;
+      case 'backto': go({ view: 'step', slug: t.dataset.slug, i: +t.dataset.i || 0 }, { autoplay: true }); break;
+      case 'restart': setMounts(state.slug, null); go({ view: 'step', slug: state.slug, i: 0 }, { autoplay: true }); break;
+      case 'start': go({ view: 'step', slug: state.slug, i: 0 }, { autoplay: true }); break;
       case 'resume': go({ view: 'step', slug: state.slug, i: +t.dataset.i || 0 }, { autoplay: true }); break;
       case 'home': go({ view: 'home' }); break;
       case 'goto': {
