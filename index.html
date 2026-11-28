@@ -656,6 +656,20 @@ body[data-view="done"] .btn--line { border-color: var(--black); color: var(--bla
 .introall { justify-self: center; margin-top: 4px; padding: 10px 8px; color: var(--accent); font-size: 15.5px; text-decoration: underline; text-underline-offset: 3px; }
 
 
+/* Which mounts do you have? */
+.title--pick { margin: 2px auto 0; text-align: center; font: 400 clamp(24px, 7vw, 32px)/1.15 var(--f-display); }
+.picksub { margin: 10px auto 18px; text-align: center; color: var(--dim); font-size: 16.5px; }
+.pick { display: grid; gap: 12px; width: 100%; }
+.pickopt { display: flex; align-items: center; gap: 14px; width: 100%; padding: 10px 16px 10px 10px; border: 0; border-radius: 22px; background: var(--paper); color: var(--ink, #3F072F); text-align: left; cursor: pointer; font: inherit; }
+.pickopt:hover { filter: brightness(1.03); }
+.pickopt:focus-visible { outline: 3px solid var(--signal); outline-offset: 3px; }
+.pickopt__pic { flex: none; width: 84px; height: 84px; border-radius: 14px; background: #000; overflow: hidden; }
+.pickopt__pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pickopt__txt { flex: 1; display: grid; gap: 2px; }
+.pickopt__txt strong { font-size: 18px; font-weight: 600; }
+.pickopt__txt small { font-size: 15px; opacity: .72; }
+.pickopt svg { flex: none; width: 22px; height: 22px; }
+
 </style>
 </head>
 <body>
@@ -758,30 +772,29 @@ window.SPROOS_DATA = (function () {
     // Slide bar: five pages on the live site (tips + 4 steps). These videos have no private hash.
     'bar-tips': {
       title: 'Tips for mounting your slide bar.', em: 'Tips', section: 'Slide bar',
-      video: { id: '1097389824' },
-      link: { label: 'Have rectangle-shaped slide bar mounts?', slug: 'slide-bar-rectangle' },
+      video: { id: '1097389824' }, pick: true,
       faq: ['bar-adhesive', 'bar-damage', 'bar-move']
     },
     'bar-clean': {
       title: 'Clean your shower wall.', em: 'Clean', section: 'Slide bar',
-      video: { id: '1097390058' },
+      video: { id: '1097390058' }, vNew: { video: { id: '1250752210', h: '4bafcf9e15' } },
       callout: { kind: 'caution', title: 'Caution', body: 'The slide bar is not meant to be used as a grab bar or handle.' },
       faq: ['bar-adhesive']
     },
     'bar-mounts': {
       title: 'Apply the mounts to the wall.', em: 'mounts', section: 'Slide bar',
-      video: { id: '1097390088' },
+      video: { id: '1097390088' }, vNew: { video: { id: '1250752211', h: '12d1c25802' } },
       faq: ['bar-adhesive']
     },
     'bar-glue': {
       title: 'Apply the glue.', em: 'glue', section: 'Slide bar',
-      video: { id: '1097390497' },
+      video: { id: '1097390497' }, vNew: { video: { id: '1250752209', h: 'd1fd970fbe' } },
       faq: ['bar-damage']
     },
     // The live page calls this "Reinstalling the slide bar." Wording kept; worth confirming for first-time installs.
     'bar-hang': {
       title: 'Reinstall the slide bar.', em: 'slide bar', section: 'Slide bar',
-      video: { id: '1097390550' },
+      video: { id: '1097390550' }, vNew: { video: { id: '1250752208', h: 'da0a735967' } },
       faq: ['bar-accessories', 'bar-side']
     },
     // Rectangle-mount slide bar install (the original bar). Videos have private hashes.
@@ -815,6 +828,13 @@ window.SPROOS_DATA = (function () {
     'acc-soap':   { title: 'Install your soap dish.',  em: 'soap dish',  section: 'Accessories', video: null, faq: ['bar-accessories', 'bar-side'] },
     'acc-phone':  { title: 'Install your phone mount.',em: 'phone mount',section: 'Accessories', video: null, faq: ['bar-accessories', 'bar-side'] }
   };
+  // Which mounts did the customer get? The new round mount swaps in new videos for steps 2-5.
+  // Photos: add an `img` URL to any option and it replaces the black placeholder.
+  var mountOptions = [
+    { id: 'new', name: 'New round mounts', sub: 'Different style glue tube' },
+    { id: 'current', name: 'Round mounts', sub: 'Original glue tube' },
+    { id: 'rect', name: 'Rectangle mounts', sub: 'The original slide bar', rect: true }
+  ];
   var barSteps = ['bar-tips', 'bar-clean', 'bar-mounts', 'bar-glue', 'bar-hang'];
 
   var kitLeakCallout = {
@@ -879,7 +899,7 @@ window.SPROOS_DATA = (function () {
       overrides: { 'filter': { assumed: true } }, swatch: ['#2EA66B', '#000000']
     },
     {
-      slug: 'slide-bar', name: 'Slide Bar', group: 'addon',
+      slug: 'slide-bar', name: 'Slide Bar', group: 'addon', pickRect: true,
       alt: { text: 'Rectangle-shaped mounts?', label: 'Use the rectangle guide', slug: 'slide-bar-rectangle' },
       img: 'https://cdn.shopify.com/s/files/1/0583/6242/9605/files/sproosslidebar-Green.jpg?v=1748545488',
       box: ['24" sproos! slide bar', 'Hand shower slider', 'Soap dish', 'Glue kit', 'Video instructions'], banner: slideBarBanner, hideFaq: ['off', 'new'],
@@ -985,7 +1005,7 @@ window.SPROOS_DATA = (function () {
       a: ['No. Accessories are designed for the left side only, so the slider can move up and down on the right.'] }
   ];
 
-  return { steps: steps, guides: guides, menu: menu, faqs: faqs, faqGroups: faqGroups };
+  return { steps: steps, guides: guides, menu: menu, faqs: faqs, faqGroups: faqGroups, mountOptions: mountOptions };
 })();
 
 
@@ -1001,7 +1021,7 @@ window.SPROOS_DATA = (function () {
 
   var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
-  var state = { view: 'home', slug: null, i: 0, dir: 1, autoplay: false, outcome: null };
+  var state = { view: 'home', slug: null, i: 0, dir: 1, autoplay: false, outcome: null, mounts: loadMounts() };
   var sheet = null, sheetReturn = null, lastHash = '';
 
   /* ---------- helpers ---------- */
@@ -1021,6 +1041,9 @@ window.SPROOS_DATA = (function () {
   }
 
   var KEY = 'sproos.install.v1';
+  var MKEY = 'sproos.mounts.v1';
+  function loadMounts() { try { return localStorage.getItem(MKEY) || null; } catch (e) { return null; } }
+  function saveMounts(v) { try { if (v) localStorage.setItem(MKEY, v); else localStorage.removeItem(MKEY); } catch (e) { /* storage can be blocked */ } }
   function loadProg() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } }
   function saveProg(slug, i) { try { var p = loadProg(); p[slug] = i; localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { /* storage can be blocked */ } }
 
@@ -1052,6 +1075,7 @@ window.SPROOS_DATA = (function () {
       var base = D.steps[id], o = (g.overrides && g.overrides[id]) || {}, s = { id: id, index: idx };
       for (var k in base) s[k] = base[k];
       for (var j in o) s[j] = o[j];
+      if (state.mounts === 'new' && s.vNew) for (var m in s.vNew) s[m] = s.vNew[m];
       return s;
     });
   }
@@ -1242,8 +1266,32 @@ window.SPROOS_DATA = (function () {
       '" target="_blank" rel="noopener">Watch on Vimeo</a></div></div>';
   }
 
+  // First screen of the slide bar steps: which mounts are on the wall?
+  function pickView(g, steps, i, s, n) {
+    var opts = D.mountOptions.filter(function (o) { return !o.rect || g.pickRect; });
+    var label = isMulti(steps) && s.section ? s.section : g.name;
+    var cards = opts.map(function (o) {
+      var pic = o.img ? '<img src="' + esc(o.img) + '" alt="" loading="lazy">' : '';
+      return '<button class="pickopt" data-act="mounts" data-v="' + o.id + '"><span class="pickopt__pic">' + pic + '</span>' +
+        '<span class="pickopt__txt"><strong>' + esc(o.name) + '</strong><small>' + esc(o.sub) + '</small></span>' + ico.right + '</button>';
+    }).join('');
+    return '<div class="shell"><aside class="rail" aria-label="All steps">' + stepListHTML(g, steps, i) + '</aside>' +
+      '<main class="col">' + topbar('step') + dotsHTML(steps, i) +
+      '<div class="swap ' + (state.dir < 0 ? 'enter enter--back' : 'enter') + '">' +
+      '<p class="eyebrow">Step ' + (i + 1) + ' of ' + n + ' · ' + esc(label) + '</p>' +
+      '<h1 class="title title--pick" tabindex="-1" data-focus>Which <em>mounts</em> do you have?</h1>' +
+      '<p class="picksub">Check your box. The steps are a little different for each.</p>' +
+      '<div class="pick">' + cards + '</div></div>' +
+      '<nav class="pager" aria-label="Step navigation"><button class="btn btn--back" data-act="back">' + ico.left + 'Back</button></nav>' +
+      footer() + dockHTML() + '</main></div>';
+  }
   function stepView() {
     var g = cur(), steps = stepsOf(g), i = state.i, s = steps[i], n = steps.length, last = i === n - 1;
+    if (!state.mounts && (s.pick || s.vNew)) {
+      var pi = i;
+      steps.forEach(function (x, k) { if (x.pick && k <= i) pi = k; });
+      return pickView(g, steps, pi, steps[pi], n);
+    }
     var rel = faqsFor(s.faq);
     var callout = s.callout
       ? '<aside class="callout' + (s.callout.kind === 'caution' ? ' callout--caution' : '') + '"><h2>' + esc(s.callout.title) +
@@ -1252,6 +1300,9 @@ window.SPROOS_DATA = (function () {
       ? '<p class="steplink">' + (s.link.slug
         ? '<a href="' + hashFor({ view: 'intro', slug: s.link.slug }) + '" data-act="intro" data-slug="' + s.link.slug + '">'
         : '<a href="' + esc(s.link.url) + '" target="_blank" rel="noopener">') + esc(s.link.label) + '</a></p>' : '';
+    if (!link && state.mounts && (s.pick || s.vNew)) {
+      link = '<p class="steplink"><a href="#" data-act="mounts-reset">Wrong mounts? Change</a></p>';
+    }
     var label = isMulti(steps) && s.section ? s.section : g.name;
     var hints = rel.length
       ? '<section class="hints"><p class="hints__t">Common questions on this step</p><div class="chips">' +
@@ -1593,6 +1644,19 @@ window.SPROOS_DATA = (function () {
       case 'back':
         if (state.i > 0) go({ view: 'step', slug: state.slug, i: state.i - 1 }, { dir: -1, autoplay: true });
         else go({ view: 'intro', slug: state.slug }, { dir: -1 });
+        break;
+      case 'mounts':
+        var mv = t.dataset.v;
+        if (mv === 'rect') { go({ view: 'intro', slug: 'slide-bar-rectangle' }); break; }
+        state.mounts = mv; saveMounts(mv);
+        track('install_mounts_pick', { guide: state.slug, mounts: mv });
+        var pk = 0; stepsOf(cur()).forEach(function (x, k) { if (x.pick && k <= state.i) pk = k; });
+        go({ view: 'step', slug: state.slug, i: pk }, { dir: 1, autoplay: false });
+        break;
+      case 'mounts-reset':
+        state.mounts = null; saveMounts(null);
+        var rk = state.i; stepsOf(cur()).forEach(function (x, k) { if (x.pick && k <= state.i) rk = k; });
+        go({ view: 'step', slug: state.slug, i: rk }, { dir: -1 });
         break;
       case 'steps': openSteps(); break;
       case 'faq': openFaq(t.dataset.id || null); break;
